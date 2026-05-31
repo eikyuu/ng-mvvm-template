@@ -18,7 +18,9 @@ export class UserRepository {
 
   list(): Promise<User[]> {
     return firstValueFrom(
-      this.http.get<UserDto[]>(`${this.env.apiBaseUrl}/users`).pipe(map((dtos) => dtos.map(mapUserDto))),
+      this.http
+        .get<UserDto[]>(`${this.env.apiBaseUrl}/users`)
+        .pipe(map((dtos) => dtos.map(mapUserDto))),
     );
   }
 

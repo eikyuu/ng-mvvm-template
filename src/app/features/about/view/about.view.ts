@@ -15,7 +15,9 @@ import { APP_ENV } from '@core/config/app.config.token';
         <dt class="opacity-60">Environnement</dt>
         <dd>{{ env.production ? 'production' : 'développement' }}</dd>
         <dt class="opacity-60">API</dt>
-        <dd><code>{{ env.apiBaseUrl }}</code></dd>
+        <dd>
+          <code>{{ env.apiBaseUrl }}</code>
+        </dd>
       </dl>
     </section>
   `,
