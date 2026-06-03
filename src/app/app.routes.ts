@@ -18,6 +18,12 @@ export const routes: Routes = [
         title: 'Counter',
       },
       {
+        path: 'tasks',
+        loadComponent: () =>
+          import('@features/tasks/view/tasks.view').then((m) => m.TasksView),
+        title: 'Tasks',
+      },
+      {
         path: 'about',
         loadComponent: () => import('@features/about/view/about.view').then((m) => m.AboutView),
         title: 'À propos',

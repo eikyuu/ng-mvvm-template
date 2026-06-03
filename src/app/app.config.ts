@@ -11,6 +11,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { APP_ENV } from '@core/config/app.config.token';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { GlobalErrorHandler } from '@core/services/global-error-handler';
+import { InMemoryTaskRepository, TaskRepository } from '@data/repositories/task.repository';
 import { environment } from '@env/environment';
 
 import { routes } from './app.routes';
@@ -24,5 +25,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     { provide: APP_ENV, useValue: environment },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    { provide: TaskRepository, useClass: InMemoryTaskRepository },
   ],
 };

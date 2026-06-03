@@ -50,6 +50,7 @@ export class MainLayoutComponent {
   protected readonly year = new Date().getFullYear();
   protected readonly links = [
     { path: '/counter', label: 'Counter' },
+    { path: '/tasks', label: 'Tasks' },
     { path: '/about', label: 'À propos' },
   ] as const;
 }
