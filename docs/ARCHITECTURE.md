@@ -174,7 +174,6 @@ Un layout n'a **pas de ViewModel** — c'est de la présentation pure. S'il a be
 
 - **Zoneless** (`provideZonelessChangeDetection`).
 - **SSR + hydration** activés (`provideClientHydration(withEventReplay(), withNoIncrementalHydration())`).
-- `withFetch()` pour un HttpClient compatible Edge / Node.
 
 ## Tests
 

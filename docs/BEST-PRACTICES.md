@@ -59,7 +59,6 @@ Cible : Angular 22+, TypeScript 6.0, zoneless, signals-first, standalone, SSR.
 
 ## HTTP
 
-- `provideHttpClient(withFetch())` — compatible SSR / Edge.
 - `httpResource()` pour un GET réactif exposé en signal (loading / value / error) directement dans le ViewModel.
 - Interceptors en **fonctions** (`HttpInterceptorFn`), pas en classes.
 - Erreurs centralisées dans un interceptor.

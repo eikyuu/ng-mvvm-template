@@ -38,7 +38,7 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 
 - Angular 22.x, standalone, zoneless (`provideZonelessChangeDetection`).
 - TypeScript 6.0 (`typescript ~6.0.x`).
-- SSR + hydration (`provideClientHydration(withEventReplay(), withNoIncrementalHydration())`, `withFetch()`).
+- SSR + hydration (`provideClientHydration(withEventReplay(), withNoIncrementalHydration())`).
 - Routing : lazy uniquement (`loadComponent`), `withComponentInputBinding()`, `withViewTransitions()`.
 - Vitest via `@angular/build:unit-test` (`runner: vitest`, env jsdom).
 - Tailwind v4 (`src/tailwind.css`).
@@ -99,7 +99,6 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 
 ## HTTP
 
-- `provideHttpClient(withFetch())` (compatible SSR/Edge).
 - `httpResource()` pour exposer un GET directement en signal réactif depuis un ViewModel.
 - Interceptors en **fonctions** (`HttpInterceptorFn`) — voir `@core/interceptors/error.interceptor.ts`.
 - Repositories dans `data/repositories/` retournent `Promise` (via `firstValueFrom`) ou `Observable`. Jamais de state mutable.
