@@ -1,10 +1,11 @@
 # Best practices Angular 2026
 
-Cible : Angular 21+, zoneless, signals-first, standalone, SSR.
+Cible : Angular 22+, TypeScript 6.0, zoneless, signals-first, standalone, SSR.
 
 ## TypeScript
 
 - `strict: true` non négociable.
+- TypeScript 6.0 (`~6.0.x`), requis par Angular 22.
 - Pas de `any`. Utiliser `unknown` aux frontières, puis narrow.
 - Préférer l'inférence de type quand elle est évidente.
 - `readonly` sur tout ce qui ne doit pas muter (props d'interface, propriétés de classe, tableaux exposés).
@@ -28,7 +29,7 @@ Cible : Angular 21+, zoneless, signals-first, standalone, SSR.
 - État partagé entre composants frères : signal dans un service injecté.
 - État global applicatif : service `providedIn: 'root'`.
 - `linkedSignal()` quand un signal doit se réinitialiser depuis une source.
-- `resource()` / `rxResource()` pour les chargements async — préférer ça à `toSignal(http$)`.
+- `resource()` / `rxResource()` / `httpResource()` pour les chargements async — préférer ça à `toSignal(http$)`.
 - `effect()` réservé aux **effets de bord** (logging, localStorage, focus). Jamais pour transformer un signal en autre signal — c'est le rôle de `computed`.
 - Pas de `mutate`. Utiliser `set` ou `update`.
 - Pas d'`Observable` exposé au template — convertir via `toSignal()` à la frontière.
@@ -59,6 +60,7 @@ Cible : Angular 21+, zoneless, signals-first, standalone, SSR.
 ## HTTP
 
 - `provideHttpClient(withFetch())` — compatible SSR / Edge.
+- `httpResource()` pour un GET réactif exposé en signal (loading / value / error) directement dans le ViewModel.
 - Interceptors en **fonctions** (`HttpInterceptorFn`), pas en classes.
 - Erreurs centralisées dans un interceptor.
 - Repositories retournent des `Promise` (via `firstValueFrom`) ou des `Observable` — jamais du state mutable.
@@ -81,7 +83,7 @@ Cible : Angular 21+, zoneless, signals-first, standalone, SSR.
 
 ## SSR
 
-- `provideClientHydration(withEventReplay())` activé.
+- `provideClientHydration(withEventReplay(), withNoIncrementalHydration())` activé. Retirer `withNoIncrementalHydration()` pour activer l'hydration incrémentale (`@defer` hydraté à la demande).
 - Pas de référence directe à `window` / `document` sans `isPlatformBrowser`.
 - `afterNextRender` / `afterEveryRender` pour les effets navigateur uniquement.
 

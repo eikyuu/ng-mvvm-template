@@ -1,8 +1,8 @@
 # ng-mvvm-template
 
-Template Angular 21+ réutilisable, prêt pour 2026.
+Template Angular 22+ réutilisable, prêt pour 2026.
 
-**Stack** : Angular 21 · standalone · zoneless · signals-only · SSR · Vitest · Tailwind v4 · MVVM · ESLint · commitlint · lint-staged · release-please · CI GitHub Actions.
+**Stack** : Angular 22 · TypeScript 6 · standalone · zoneless · signals-only · SSR · Vitest · Tailwind v4 · MVVM · ESLint · commitlint · lint-staged · release-please · CI GitHub Actions.
 
 ## Démarrage
 
@@ -19,6 +19,7 @@ npm run format
 ## Caractéristiques
 
 ### Architecture & code
+
 - **MVVM** strictement séparée (`model/` / `viewmodel/` / `view/`).
 - **Signals uniquement** (`signal`, `computed`, `linkedSignal`, `resource`, `effect`) — pas d'`Observable` côté state.
 - **Zoneless change detection** (`provideZonelessChangeDetection`).
@@ -29,6 +30,7 @@ npm run format
 - **ErrorHandler global** prêt à brancher Sentry/Datadog.
 
 ### Tests & qualité
+
 - **Vitest** branché sur le builder Angular `@angular/build:unit-test`.
 - **ESLint** avec règles Angular strictes (`prefer-signals`, `prefer-on-push`, control flow, a11y).
 - **Prettier** + `prettier-plugin-tailwindcss` (tri auto des classes).
@@ -36,11 +38,13 @@ npm run format
 - **Conventional commits** verrouillés par commitlint + husky.
 
 ### CI / Release
+
 - **GitHub Actions** : lint + test + build sur chaque PR et push.
 - **Release Please** : changelog + versioning sémantique automatiques depuis les commits.
 - **PR template** avec checklist MVVM.
 
 ### UI
+
 - **Tailwind v4** intégré.
 
 ## Structure

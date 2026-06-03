@@ -1,6 +1,6 @@
 # ng-mvvm-template — Guide Claude Code
 
-Template Angular 21+, **MVVM**, **signals-only**, **zoneless**, **SSR**, Vitest, Tailwind v4.
+Template Angular 22+, **MVVM**, **signals-only**, **zoneless**, **SSR**, Vitest, Tailwind v4.
 
 Lis aussi : `docs/ARCHITECTURE.md`, `docs/BEST-PRACTICES.md`, `docs/CONVENTIONS.md`, `docs/SETUP.md`.
 
@@ -23,21 +23,22 @@ Le ViewModel est **scoped au composant** via `providers: [XxxViewModel]`, pas `p
 
 ## Path aliases (à utiliser systématiquement)
 
-| Alias         | Cible                  |
-|---------------|------------------------|
-| `@core/*`     | `src/app/core/*`       |
-| `@shared/*`   | `src/app/shared/*`     |
-| `@features/*` | `src/app/features/*`   |
-| `@data/*`     | `src/app/data/*`       |
-| `@layouts/*`  | `src/app/layouts/*`    |
-| `@env/*`      | `src/environments/*`   |
+| Alias         | Cible                |
+| ------------- | -------------------- |
+| `@core/*`     | `src/app/core/*`     |
+| `@shared/*`   | `src/app/shared/*`   |
+| `@features/*` | `src/app/features/*` |
+| `@data/*`     | `src/app/data/*`     |
+| `@layouts/*`  | `src/app/layouts/*`  |
+| `@env/*`      | `src/environments/*` |
 
 Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`.
 
 ## Stack technique
 
-- Angular 21.2, standalone, zoneless (`provideZonelessChangeDetection`).
-- SSR + hydration (`provideClientHydration(withEventReplay())`, `withFetch()`).
+- Angular 22.x, standalone, zoneless (`provideZonelessChangeDetection`).
+- TypeScript 6.0 (`typescript ~6.0.x`).
+- SSR + hydration (`provideClientHydration(withEventReplay(), withNoIncrementalHydration())`, `withFetch()`).
 - Routing : lazy uniquement (`loadComponent`), `withComponentInputBinding()`, `withViewTransitions()`.
 - Vitest via `@angular/build:unit-test` (`runner: vitest`, env jsdom).
 - Tailwind v4 (`src/tailwind.css`).
@@ -52,6 +53,9 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 - `readonly` sur tout ce qui ne doit pas muter.
 - Interfaces > types pour les objets (règle ESLint `consistent-type-definitions: interface`).
 - Préférer l'inférence quand le type est évident.
+- TypeScript 6.0 (`~6.0.x`) requis par Angular 22 — éviter les API TS dépréciées en v6.
+- Diagnostics templates `nullishCoalescingNotNullable` et `optionalChainNotNullable` mis en `suppress` (`tsconfig.app.json` / `tsconfig.spec.json`) — ne pas les réactiver sans raison.
+- `baseUrl` conservé (requis par le bundler pour résoudre les alias `@core/*`…) + `ignoreDeprecations: "6.0"` pour silencer la dépréciation TS6 jusqu'à TS7.
 
 ## Composants
 
@@ -71,7 +75,7 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 - État dérivé = `computed()`. **Jamais** de recalcul manuel.
 - Signal privé `_camelCase` exposé via `asReadonly()` ou `computed()`.
 - `linkedSignal()` quand l'état doit se réinitialiser depuis une source.
-- `resource()` / `rxResource()` pour les chargements async — préférer ça à `toSignal(http$)`.
+- `resource()` / `rxResource()` / `httpResource()` pour les chargements async — préférer ça à `toSignal(http$)`.
 - `effect()` UNIQUEMENT pour effets de bord (logging, localStorage, focus). Pas pour transformer un signal en autre signal.
 - Pas de `.mutate()` — utiliser `.set()` ou `.update()`.
 - **Pas d'`Observable` exposé au template** — convertir via `toSignal()` à la frontière.
@@ -96,6 +100,7 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 ## HTTP
 
 - `provideHttpClient(withFetch())` (compatible SSR/Edge).
+- `httpResource()` pour exposer un GET directement en signal réactif depuis un ViewModel.
 - Interceptors en **fonctions** (`HttpInterceptorFn`) — voir `@core/interceptors/error.interceptor.ts`.
 - Repositories dans `data/repositories/` retournent `Promise` (via `firstValueFrom`) ou `Observable`. Jamais de state mutable.
 - Erreurs centralisées dans `errorInterceptor` + `GlobalErrorHandler` (`@core/services/global-error-handler.ts`).
@@ -128,6 +133,7 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 ## Commits (conventional-commits, verrouillés)
 
 Format :
+
 ```
 <type>(<scope>?): <sujet>
 ```
@@ -135,6 +141,7 @@ Format :
 Types autorisés : `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
 Règles :
+
 - Sujet en **minuscule**, impératif présent, pas de point final, ≤ 100 caractères.
 - `feat` ⇒ bump minor automatique (release-please).
 - `fix` ⇒ bump patch automatique.
@@ -143,6 +150,7 @@ Règles :
 ## Commandes à lancer
 
 Avant tout commit ou PR :
+
 ```bash
 npm run lint
 npm test

@@ -1,6 +1,6 @@
 # Architecture
 
-Template Angular 21+ basé sur l'architecture **MVVM** (Model-View-ViewModel), 100% **signals**, **standalone**, **zoneless**, **SSR-ready**.
+Template Angular 22+ basé sur l'architecture **MVVM** (Model-View-ViewModel), 100% **signals**, **standalone**, **zoneless**, **SSR-ready**.
 
 ## Vue d'ensemble
 
@@ -75,6 +75,7 @@ src/app/
 ## MVVM en pratique
 
 ### Model
+
 Interfaces immutables (`readonly`). Aucune logique. Représente le **domaine**.
 
 ```ts
@@ -86,8 +87,9 @@ export interface CounterState {
 ```
 
 ### ViewModel
+
 - Service `@Injectable()` (sans `providedIn: 'root'`) — **scoped au composant**.
-- Expose l'état **uniquement** via signals (`signal`, `computed`, `linkedSignal`, `resource`).
+- Expose l'état **uniquement** via signals (`signal`, `computed`, `linkedSignal`, `resource`, `httpResource`).
 - Méthodes publiques = **intents** (verbes : `increment`, `loadUser`, `submit`).
 - Aucun accès direct au DOM. Injecte les repositories.
 
@@ -98,11 +100,14 @@ export class CounterViewModel {
   readonly value = this._value.asReadonly();
   readonly isZero = computed(() => this._value() === 0);
 
-  increment(): void { this._value.update(v => v + 1); }
+  increment(): void {
+    this._value.update((v) => v + 1);
+  }
 }
 ```
 
 ### View
+
 - Composant standalone, `ChangeDetectionStrategy.OnPush`.
 - Injecte le ViewModel via `providers: [XxxViewModel]` puis `inject(XxxViewModel)`.
 - Le template lit les signals (`vm.value()`) et appelle les intents (`vm.increment()`).
@@ -127,14 +132,14 @@ Pour un état global, créez un **service `providedIn: 'root'`** dans `core/serv
 
 ## Communication
 
-| Direction              | Mécanisme                                            |
-|------------------------|------------------------------------------------------|
-| Parent → enfant        | `input()` (signal input)                             |
-| Enfant → parent        | `output()`                                           |
-| Frères                 | Service partagé via injection                        |
-| Cross-feature          | Service `providedIn: 'root'` dans `core/services/`   |
-| HTTP                   | Repository injecté dans le ViewModel                 |
-| Effet de bord          | `effect()` dans le ViewModel (avec `cleanup`)        |
+| Direction       | Mécanisme                                          |
+| --------------- | -------------------------------------------------- |
+| Parent → enfant | `input()` (signal input)                           |
+| Enfant → parent | `output()`                                         |
+| Frères          | Service partagé via injection                      |
+| Cross-feature   | Service `providedIn: 'root'` dans `core/services/` |
+| HTTP            | Repository injecté dans le ViewModel               |
+| Effet de bord   | `effect()` dans le ViewModel (avec `cleanup`)      |
 
 ## Routing
 
@@ -168,7 +173,7 @@ Un layout n'a **pas de ViewModel** — c'est de la présentation pure. S'il a be
 ## Rendu
 
 - **Zoneless** (`provideZonelessChangeDetection`).
-- **SSR + hydration** activés (`provideClientHydration(withEventReplay())`).
+- **SSR + hydration** activés (`provideClientHydration(withEventReplay(), withNoIncrementalHydration())`).
 - `withFetch()` pour un HttpClient compatible Edge / Node.
 
 ## Tests
@@ -184,46 +189,46 @@ Chaque dossier contient un exemple minimal **canonique** — pas un exemple jeta
 
 ### `core/`
 
-| Dossier         | Exemple                             | Rôle                                            |
-|-----------------|-------------------------------------|--------------------------------------------------|
-| `config/`       | `app.config.token.ts`               | `InjectionToken<AppEnvironment>` global         |
-| `guards/`       | `auth.guard.ts`                     | `CanActivateFn` — guard fonctionnel             |
-| `interceptors/` | `error.interceptor.ts`              | `HttpInterceptorFn` — log centralisé des erreurs HTTP |
-| `services/`     | `logger.service.ts`                 | Singleton `providedIn: 'root'`                  |
-| `services/`     | `global-error-handler.ts`           | `ErrorHandler` global — point d'attache Sentry  |
-| `tokens/`       | `window.token.ts`                   | Token SSR-safe pour `window`                    |
+| Dossier         | Exemple                   | Rôle                                                  |
+| --------------- | ------------------------- | ----------------------------------------------------- |
+| `config/`       | `app.config.token.ts`     | `InjectionToken<AppEnvironment>` global               |
+| `guards/`       | `auth.guard.ts`           | `CanActivateFn` — guard fonctionnel                   |
+| `interceptors/` | `error.interceptor.ts`    | `HttpInterceptorFn` — log centralisé des erreurs HTTP |
+| `services/`     | `logger.service.ts`       | Singleton `providedIn: 'root'`                        |
+| `services/`     | `global-error-handler.ts` | `ErrorHandler` global — point d'attache Sentry        |
+| `tokens/`       | `window.token.ts`         | Token SSR-safe pour `window`                          |
 
 ### `shared/`
 
-| Dossier         | Exemple                             | Rôle                                            |
-|-----------------|-------------------------------------|--------------------------------------------------|
-| `components/`   | `not-found/not-found.component.ts`  | Composant UI standalone, OnPush                 |
-| `directives/`   | `autofocus.directive.ts`            | Directive avec `input()` et `afterNextRender`   |
-| `pipes/`        | `truncate.pipe.ts` (+ `.spec.ts`)   | Pipe pur testé avec Vitest                      |
-| `utils/`        | `assert.util.ts`                    | Fonctions pures (`assertNonNullable`, `typedKeys`) |
+| Dossier       | Exemple                            | Rôle                                               |
+| ------------- | ---------------------------------- | -------------------------------------------------- |
+| `components/` | `not-found/not-found.component.ts` | Composant UI standalone, OnPush                    |
+| `directives/` | `autofocus.directive.ts`           | Directive avec `input()` et `afterNextRender`      |
+| `pipes/`      | `truncate.pipe.ts` (+ `.spec.ts`)  | Pipe pur testé avec Vitest                         |
+| `utils/`      | `assert.util.ts`                   | Fonctions pures (`assertNonNullable`, `typedKeys`) |
 
 ### `data/`
 
-| Dossier          | Exemple                  | Rôle                                                  |
-|------------------|--------------------------|--------------------------------------------------------|
-| `models/`        | `user.model.ts`          | Interface domaine `readonly` + branded type `UserId`  |
-| `http/`          | `user.dto.ts`            | DTO brut API + mapper `mapUserDto` vers le domaine    |
-| `repositories/`  | `user.repository.ts`     | Seul endroit qui touche `HttpClient`, renvoie du domaine |
+| Dossier         | Exemple              | Rôle                                                     |
+| --------------- | -------------------- | -------------------------------------------------------- |
+| `models/`       | `user.model.ts`      | Interface domaine `readonly` + branded type `UserId`     |
+| `http/`         | `user.dto.ts`        | DTO brut API + mapper `mapUserDto` vers le domaine       |
+| `repositories/` | `user.repository.ts` | Seul endroit qui touche `HttpClient`, renvoie du domaine |
 
 ### `features/`
 
-| Dossier              | Exemple                          | Rôle                                |
-|----------------------|----------------------------------|--------------------------------------|
-| `counter/model/`     | `counter.model.ts`               | `CounterState` immutable + initial   |
-| `counter/viewmodel/` | `counter.viewmodel.ts` (+ spec)  | Signals privés, intents, computed    |
-| `counter/view/`      | `counter.view.ts`                | View OnPush, lit `vm.xxx()`          |
-| `about/view/`        | `about.view.ts`                  | Feature sans état (page statique)    |
+| Dossier              | Exemple                         | Rôle                               |
+| -------------------- | ------------------------------- | ---------------------------------- |
+| `counter/model/`     | `counter.model.ts`              | `CounterState` immutable + initial |
+| `counter/viewmodel/` | `counter.viewmodel.ts` (+ spec) | Signals privés, intents, computed  |
+| `counter/view/`      | `counter.view.ts`               | View OnPush, lit `vm.xxx()`        |
+| `about/view/`        | `about.view.ts`                 | Feature sans état (page statique)  |
 
 ### `layouts/`
 
-| Dossier        | Exemple                              | Rôle                              |
-|----------------|--------------------------------------|-----------------------------------|
-| `main-layout/` | `main-layout.component.ts`          | Chrome (header/nav/footer) + `<router-outlet />` |
+| Dossier        | Exemple                    | Rôle                                             |
+| -------------- | -------------------------- | ------------------------------------------------ |
+| `main-layout/` | `main-layout.component.ts` | Chrome (header/nav/footer) + `<router-outlet />` |
 
 ### Règles de lecture
 

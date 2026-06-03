@@ -6,7 +6,11 @@ import {
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import {
+  provideClientHydration,
+  withEventReplay,
+  withNoIncrementalHydration,
+} from '@angular/platform-browser';
 
 import { APP_ENV } from '@core/config/app.config.token';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
@@ -22,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
     provideHttpClient(withFetch(), withInterceptors([errorInterceptor])),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withEventReplay(), withNoIncrementalHydration()),
     { provide: APP_ENV, useValue: environment },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     { provide: TaskRepository, useClass: InMemoryTaskRepository },
