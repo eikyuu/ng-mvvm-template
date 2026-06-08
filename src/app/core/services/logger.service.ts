@@ -1,6 +1,6 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { isDevMode, Service } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class LoggerService {
   info(message: string, ...args: unknown[]): void {
     if (isDevMode()) {
