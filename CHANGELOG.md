@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/eikyuu/ng-mvvm-template/compare/ng-mvvm-template-v1.1.0...ng-mvvm-template-v1.1.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* remove unused libc entries from package-lock.json ([6894184](https://github.com/eikyuu/ng-mvvm-template/commit/68941840383938d48890d21bb520980b22dd9ad1))
+
 ## [1.1.0](https://github.com/eikyuu/ng-mvvm-template/compare/ng-mvvm-template-v1.0.0...ng-mvvm-template-v1.1.0) (2026-06-08)
 
 
