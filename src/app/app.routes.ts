@@ -19,8 +19,7 @@ export const routes: Routes = [
       },
       {
         path: 'tasks',
-        loadComponent: () =>
-          import('@features/tasks/view/tasks.view').then((m) => m.TasksView),
+        loadComponent: () => import('@features/tasks/view/tasks.view').then((m) => m.TasksView),
         title: 'Tasks',
       },
       {

@@ -108,19 +108,34 @@ describe('TasksViewModel', () => {
 
   it('signale une erreur si le titre est vide', () => {
     expect(vm.form().valid()).toBe(false);
-    expect(vm.form.title().errors().some((e) => e.kind === 'required')).toBe(true);
+    expect(
+      vm.form
+        .title()
+        .errors()
+        .some((e) => e.kind === 'required'),
+    ).toBe(true);
   });
 
   it('signale une erreur si le titre dépasse 100 caractères', () => {
     vm.form.title().value.set('x'.repeat(101));
     expect(vm.form().valid()).toBe(false);
-    expect(vm.form.title().errors().some((e) => e.kind === 'maxLength')).toBe(true);
+    expect(
+      vm.form
+        .title()
+        .errors()
+        .some((e) => e.kind === 'maxLength'),
+    ).toBe(true);
   });
 
   it('signale une erreur si la date est invalide', () => {
     vm.form.title().value.set('ok');
     vm.form.dueDate().value.set('not-a-date');
-    expect(vm.form.dueDate().errors().some((e) => e.kind === 'invalidDate')).toBe(true);
+    expect(
+      vm.form
+        .dueDate()
+        .errors()
+        .some((e) => e.kind === 'invalidDate'),
+    ).toBe(true);
     expect(vm.form().valid()).toBe(false);
   });
 
