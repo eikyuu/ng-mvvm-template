@@ -4,11 +4,11 @@ Description de l'outillage transverse fourni par le template.
 
 ## Versions Node
 
-Fichier de référence : **`.nvmrc`** → `22.12.0`.
+Fichier de référence : **`.nvmrc`** → `22.22.3`.
 Verrouillage dans `package.json` :
 
 ```json
-"engines": { "node": ">=22.12.0", "npm": ">=10.9.0" }
+"engines": { "node": ">=22.22.3", "npm": ">=10.9.0" }
 ```
 
 `npm ci` échouera si la version locale est trop basse.
@@ -17,14 +17,14 @@ Verrouillage dans `package.json` :
 
 Configurés dans `tsconfig.json` :
 
-| Alias          | Pointe vers              |
-|----------------|--------------------------|
-| `@core/*`      | `src/app/core/*`         |
-| `@shared/*`    | `src/app/shared/*`       |
-| `@features/*`  | `src/app/features/*`     |
-| `@data/*`      | `src/app/data/*`         |
-| `@layouts/*`   | `src/app/layouts/*`      |
-| `@env/*`       | `src/environments/*`     |
+| Alias         | Pointe vers          |
+| ------------- | -------------------- |
+| `@core/*`     | `src/app/core/*`     |
+| `@shared/*`   | `src/app/shared/*`   |
+| `@features/*` | `src/app/features/*` |
+| `@data/*`     | `src/app/data/*`     |
+| `@layouts/*`  | `src/app/layouts/*`  |
+| `@env/*`      | `src/environments/*` |
 
 Exemple :
 
@@ -69,10 +69,10 @@ Ne **jamais** importer `environment.ts` directement depuis un composant ou un Vi
 
 ## Lint-staged + Husky
 
-| Hook         | Action                                   |
-|--------------|------------------------------------------|
+| Hook         | Action                                                               |
+| ------------ | -------------------------------------------------------------------- |
 | `pre-commit` | `lint-staged` → eslint + prettier sur les fichiers stagés uniquement |
-| `commit-msg` | `commitlint` valide la convention        |
+| `commit-msg` | `commitlint` valide la convention                                    |
 
 Configuration dans `.lintstagedrc.json` :
 
