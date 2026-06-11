@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/eikyuu/ng-mvvm-template/compare/ng-mvvm-template-v1.1.1...ng-mvvm-template-v1.1.2) (2026-06-11)
+
+
+### Refactor
+
+* **tests:** improve readability of error assertions in TasksViewModel tests ([bc40a4c](https://github.com/eikyuu/ng-mvvm-template/commit/bc40a4c0fd61a54dee94873da73b031472f5fded))
+
 ## [1.1.1](https://github.com/eikyuu/ng-mvvm-template/compare/ng-mvvm-template-v1.1.0...ng-mvvm-template-v1.1.1) (2026-06-11)
 
 
