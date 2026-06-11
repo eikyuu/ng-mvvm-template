@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.0](https://github.com/eikyuu/ng-mvvm-template/compare/ng-mvvm-template-v1.0.0...ng-mvvm-template-v1.1.0) (2026-06-08)
+
+
+### Features
+
+* implement task management features with in-memory repository and form handling ([02a351b](https://github.com/eikyuu/ng-mvvm-template/commit/02a351b39d280dd00c103dc7bb51c667c746771d))
+
+
+### Bug Fixes
+
+* remove unused withFetch from HttpClient provider ([55c2857](https://github.com/eikyuu/ng-mvvm-template/commit/55c2857ac6e9176560e19ff49a5a7d8b665edc3b))
+* remove withFetch from SSR and HttpClient documentation ([00de70f](https://github.com/eikyuu/ng-mvvm-template/commit/00de70fb7784158582cda30010643585ffffd5c6))
+
+
+### Refactor
+
+* replace Injectable with Service decorator in LoggerService ([5854d5a](https://github.com/eikyuu/ng-mvvm-template/commit/5854d5aed3f324e787bab4a75adf0a7b6e409314))
+
 ## 1.0.0 (2026-05-31)
 
 
