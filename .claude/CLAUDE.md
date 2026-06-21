@@ -4,7 +4,9 @@ Template Angular 22+, **MVVM**, **signals-only**, **zoneless**, **SSR**, Vitest,
 
 Lis aussi : `docs/ARCHITECTURE.md`, `docs/BEST-PRACTICES.md`, `docs/CONVENTIONS.md`, `docs/SETUP.md`.
 
-## Règle d'or
+> Les conventions détaillées par couche vivent dans `.claude/rules/` (chargées selon le fichier en cours d'édition). Ce fichier ne garde que ce qui s'applique partout et au **moment de créer** une feature.
+
+## Règle d'or — la triade MVVM
 
 **Toute feature respecte la triade MVVM** :
 
@@ -21,6 +23,12 @@ src/app/features/<feature>/
 
 Le ViewModel est **scoped au composant** via `providers: [XxxViewModel]`, pas `providedIn: 'root'`.
 
+## Conventions de nommage (au moment de créer un fichier)
+
+- Suffixes obligatoires : `View`, `ViewModel`, `Service`, `Repository`, `Component` (UI partagé).
+- Fichiers en kebab-case : `counter.view.ts`, `counter.viewmodel.ts`, `user.repository.ts`.
+- Préfixe sélecteur : `app-` (kebab-case pour composants, camelCase pour directives).
+
 ## Path aliases (à utiliser systématiquement)
 
 | Alias         | Cible                |
@@ -32,7 +40,7 @@ Le ViewModel est **scoped au composant** via `providers: [XxxViewModel]`, pas `p
 | `@layouts/*`  | `src/app/layouts/*`  |
 | `@env/*`      | `src/environments/*` |
 
-Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`.
+Privilégier les alias dès qu'on sort du dossier courant. **Jamais** de `../../../../`.
 
 ## Stack technique
 
@@ -46,105 +54,30 @@ Privilégier les alias dès qu'on sort du dossier courant. Pas de `../../../../`
 - Husky + lint-staged + commitlint (conventional-commits).
 - CI GitHub Actions, release-please.
 
-## TypeScript
-
-- `strict: true`. `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns`, `strictTemplates`.
-- **Jamais `any`**. Utiliser `unknown` aux frontières puis narrow.
-- `readonly` sur tout ce qui ne doit pas muter.
-- Interfaces > types pour les objets (règle ESLint `consistent-type-definitions: interface`).
-- Préférer l'inférence quand le type est évident.
-- TypeScript 6.0 (`~6.0.x`) requis par Angular 22 — éviter les API TS dépréciées en v6.
-- Diagnostics templates `nullishCoalescingNotNullable` et `optionalChainNotNullable` mis en `suppress` (`tsconfig.app.json` / `tsconfig.spec.json`) — ne pas les réactiver sans raison.
-- `baseUrl` conservé (requis par le bundler pour résoudre les alias `@core/*`…) + `ignoreDeprecations: "6.0"` pour silencer la dépréciation TS6 jusqu'à TS7.
-
-## Composants
-
-- **Standalone par défaut** — ne JAMAIS écrire `standalone: true` (défaut depuis v20).
-- **Toujours** `changeDetection: ChangeDetectionStrategy.OnPush`.
-- `input()` / `output()` / `model()` — pas de `@Input` / `@Output`.
-- `inject()` partout, pas de constructeur DI.
-- Pas de `@HostBinding` / `@HostListener` — utiliser `host: {}`.
-- Templates inline pour les petits composants ; externes au-delà de ~40 lignes.
-- Préfixe sélecteur : `app-` (kebab-case pour composants, camelCase pour directives).
-- Suffixes obligatoires : `View`, `ViewModel`, `Service`, `Repository`, `Component` (UI partagé).
-- Fichiers en kebab-case : `counter.view.ts`, `counter.viewmodel.ts`, `user.repository.ts`.
-
-## Signals (règle stricte)
-
-- **Une seule source de vérité** par état : un `signal`.
-- État dérivé = `computed()`. **Jamais** de recalcul manuel.
-- Signal privé `_camelCase` exposé via `asReadonly()` ou `computed()`.
-- `linkedSignal()` quand l'état doit se réinitialiser depuis une source.
-- `resource()` / `rxResource()` / `httpResource()` pour les chargements async — préférer ça à `toSignal(http$)`.
-- `effect()` UNIQUEMENT pour effets de bord (logging, localStorage, focus). Pas pour transformer un signal en autre signal.
-- Pas de `.mutate()` — utiliser `.set()` ou `.update()`.
-- **Pas d'`Observable` exposé au template** — convertir via `toSignal()` à la frontière.
-- **Pas de `BehaviorSubject` pour gérer un état** — utiliser `signal()`.
-
-## Templates
-
-- Control flow natif : `@if`, `@for`, `@switch`, `@let`. JAMAIS `*ngIf` / `*ngFor`.
-- `@for` doit avoir un `track` explicite.
-- `@defer` pour les sections lourdes (`on viewport`, `on idle`, `on interaction`).
-- Pas de `ngClass` / `ngStyle` → `[class.x]` / `[style.x]`.
-- Pas de logique complexe — déplacer dans un `computed()`.
-- A11y : `aria-*`, focus visible, WCAG AA, AXE clean. Le lint template `templateAccessibility` est actif.
-
-## Services
-
-- Singletons : `@Injectable({ providedIn: 'root' })` dans `core/services/`.
-- ViewModels : `@Injectable()` **sans** `providedIn`, fournis via `providers: [...]` sur le composant.
-- Une responsabilité par service.
-- `inject()` toujours, jamais le constructeur.
-
-## HTTP
-
-- `httpResource()` pour exposer un GET directement en signal réactif depuis un ViewModel.
-- Interceptors en **fonctions** (`HttpInterceptorFn`) — voir `@core/interceptors/error.interceptor.ts`.
-- Repositories dans `data/repositories/` retournent `Promise` (via `firstValueFrom`) ou `Observable`. Jamais de state mutable.
-- Erreurs centralisées dans `errorInterceptor` + `GlobalErrorHandler` (`@core/services/global-error-handler.ts`).
-
-## Routing
+## Routing (au moment de créer une route)
 
 - 100% lazy : `loadComponent: () => import('@features/x/view/x.view').then(m => m.XView)`.
 - Guards et resolvers en **fonctions** (`CanActivateFn`, `ResolveFn`).
 - `withComponentInputBinding()` ⇒ params de route exposés via `input()`.
 - URLs en kebab-case minuscule.
 
-## Environments
+## Environments (transversal)
 
-- `@env/environment` (dev) → remplacé par `environment.prod.ts` au build prod (`fileReplacements`).
-- Consommer via le token `APP_ENV`, pas par import direct dans les composants/ViewModels :
+- Consommer via le token `APP_ENV`, jamais par import direct :
   ```ts
   const env = inject(APP_ENV);
   ```
 - Ne JAMAIS importer `environment.ts` directement depuis un composant ou ViewModel (testabilité).
-
-## Tests (Vitest)
-
-- Globals activés (`describe`, `it`, `expect`, `beforeEach` via `vitest`).
-- Cible prioritaire : **ViewModels** (logique pure sur signals).
-- View : tests de bindings et d'interactions clavier seulement.
-- Pas de mocks à outrance — préférer des fakes typés.
-- Une feature sans test de ViewModel ne se merge pas.
-- Fichier : `<source>.spec.ts` à côté du source.
+- `@env/environment` (dev) → remplacé par `environment.prod.ts` au build prod (`fileReplacements`).
 
 ## Commits (conventional-commits, verrouillés)
 
-Format :
-
-```
-<type>(<scope>?): <sujet>
-```
+Format : `<type>(<scope>?): <sujet>`
 
 Types autorisés : `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
-Règles :
-
 - Sujet en **minuscule**, impératif présent, pas de point final, ≤ 100 caractères.
-- `feat` ⇒ bump minor automatique (release-please).
-- `fix` ⇒ bump patch automatique.
-- `BREAKING CHANGE:` dans le footer ⇒ bump major.
+- `feat` ⇒ bump minor ; `fix` ⇒ bump patch ; `BREAKING CHANGE:` en footer ⇒ bump major (release-please).
 
 ## Commandes à lancer
 
@@ -157,17 +90,4 @@ npm run build
 ```
 
 `npm run format` si nécessaire. Le pre-commit hook (lint-staged) le fait sur les fichiers stagés.
-
-## Pièges à éviter
-
-- ❌ `BehaviorSubject` pour gérer un état → ✅ `signal()`.
-- ❌ `toSignal(http.get(...))` → ✅ `resource()` / `rxResource()`.
-- ❌ Logique métier dans la View → ✅ ViewModel.
-- ❌ ViewModel `providedIn: 'root'` (sauf si vraiment global → c'est alors un service de `core/`).
-- ❌ Import relatif profond (`../../../../core`) → ✅ alias `@core/...`.
-- ❌ `import { environment } from '../../environments/environment'` dans un composant → ✅ `inject(APP_ENV)`.
-- ❌ `*ngIf` / `*ngFor` → ✅ `@if` / `@for` avec `track`.
-- ❌ `any` → ✅ `unknown` + narrow.
-- ❌ `@HostBinding` / `@HostListener` → ✅ `host: {}`.
-- ❌ `ngClass` / `ngStyle` → ✅ `[class.x]` / `[style.x]`.
-- ❌ Skip hooks avec `--no-verify` — corriger plutôt que bypass.
+**Ne jamais** bypasser les hooks avec `--no-verify` — corriger plutôt que contourner.
